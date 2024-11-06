@@ -4,8 +4,10 @@ from datetime import datetime
 import os
 import webbrowser
 
+
 class FileViewer:
     def __init__(self, root):
+        self.expiration_date = datetime(2024, 12, 31)  # Дата закінчення роботи програми
         self.root = root
         self.root.title("File Viewer Demo")
         self.root.geometry("800x600")
@@ -52,13 +54,18 @@ class FileViewer:
         # Status bar
         self.status_bar = ttk.Label(root, text="Ready")
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
-
+    def check_date(self):
+        current_date = datetime.now()
+        return current_date <= self.expiration_date
+        
     def encrypt_text(self):
         if not self.is_registered:
             messagebox.showwarning("Registration Required", 
                                  "Please register to use the encryption feature")
             return
-        
+        if not self.check_date():
+            messagebox.showerror("Error", "Program license has expired!")
+            return
         # Create encryption window
         encrypt_window = tk.Toplevel(self.root)
         encrypt_window.title("Encrypt Text")
@@ -93,6 +100,9 @@ class FileViewer:
                                  "Please register to use the decryption feature")
             return
         
+        if not self.check_date():
+            messagebox.showerror("Error", "Program license has expired!")
+            return
         # Create decryption window
         decrypt_window = tk.Toplevel(self.root)
         decrypt_window.title("Decrypt Text")
