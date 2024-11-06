@@ -7,7 +7,10 @@ import webbrowser
 
 class FileViewer:
     def __init__(self, root):
-        self.expiration_date = datetime(2024, 12, 31)  # Дата закінчення роботи програми
+        self._x1 = 2024  # Рік
+        self._x2 = 12    # Місяць
+        self._x3 = 31    # День
+
         self.root = root
         self.root.title("File Viewer Demo")
         self.root.geometry("800x600")
@@ -54,9 +57,26 @@ class FileViewer:
         # Status bar
         self.status_bar = ttk.Label(root, text="Ready")
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        
     def check_date(self):
-        current_date = datetime.now()
-        return current_date <= self.expiration_date
+        current = datetime.now()
+        
+        p1 = ((current.year * 2) % 4048) == (self._x1 * 2) % 4048
+        p2 = (current.month + 15) * (current.month - 3) <= (self._x2 + 15) * (self._x2 - 3)
+        p3 = (current.day ** 2 + current.day) <= (self._x3 ** 2 + self._x3)
+        
+        t1 = (current.year % 4 == 0) and (current.year % 100 != 0) or (current.year % 400 == 0)
+        t2 = (current.month * current.month) % 13 == (current.month * 7) % 13
+        
+        if t1 and not t1:
+            return False
+            
+        if current.year < 1900:
+            self._x1 = current.year
+            self._x2 = current.month
+            
+        return (p1 and (t2 or not t2)) and p2 and (p3 or (not p3 and p3)) and not (not p1 or not p2 or not p3)
+        
         
     def encrypt_text(self):
         if not self.is_registered:
